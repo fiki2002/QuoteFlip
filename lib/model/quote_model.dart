@@ -9,7 +9,7 @@ class QuoteModel {
   });
 
   factory QuoteModel.fromJson(Map<String, dynamic> json) {
-    final id = json["id"];
+    final id = json["_id"];
     if (id is! String) {
       throw FormatException(
           'Invalid JSON: required "id" field of type String in $json');
