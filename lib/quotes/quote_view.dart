@@ -12,117 +12,193 @@ class QuoteFlip extends StatefulWidget {
   State<QuoteFlip> createState() => _QuoteFlipState();
 }
 
-class _QuoteFlipState extends State<QuoteFlip> {
-  bool isBack = false;
-
-  double angle = 0;
+class _QuoteFlipState extends State<QuoteFlip>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   @override
   void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
     getQuote();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TweenAnimationBuilder(
-            tween: Tween<double>(begin: 0.0, end: angle),
-            duration: const Duration(seconds: 1),
-            builder: (context, val, _) {
-              if (val >= (pi / 2)) {
-                isBack = false;
-              } else {
-                isBack = true;
-              }
-              return Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateY(val),
-                child: SizedBox(
-                  child: isBack
-                      ? Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          height: height * 0.65,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                quote?.content ?? 'No Available Quote',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 80),
-                              Text(
-                                quote?.author ?? '- -',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Transform(
-                          alignment: Alignment.center,
-                          transform: Matrix4.identity()..rotateY(pi),
-                          child: Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.symmetric(horizontal: 20),
-                            height: height * 0.65,
-                            decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(.1),
-                              borderRadius: BorderRadius.circular(20),
+      body: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            // final angle = _controller.value * -pi;
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                isFetchingQuote
+                    ? Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      height: height * 0.65,
+                      decoration: BoxDecoration(
+                        color: Colors.pink.withOpacity(.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    )
+                    : Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      height: height * 0.65,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            quote?.content ?? 'No Available Quote',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                        ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+                          const SizedBox(height: 80),
+                          Text(
+                            quote?.author ?? '- -',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                // TweenAnimationBuilder(
+                //   tween: Tween<double>(begin: 0.0, end: angle),
+                //   duration: const Duration(seconds: 1),
+                //   builder: (context, val, _) {
+                //     if (val >= (pi / 2)) {
+                //       isBack = false;
+                //     } else {
+                //       isBack = true;
+                //     }
+                //     return Transform(
+                //       alignment: Alignment.center,
+                //       transform: Matrix4.identity()
+                //         ..setEntry(3, 2, 0.001)
+                //         ..rotateY(val),
+                //       child: SizedBox(
+                //         child: isBack
+                //             ? Container(
+                //                 margin: const EdgeInsets.symmetric(horizontal: 20),
+                //                 padding: const EdgeInsets.symmetric(horizontal: 15),
+                //                 height: height * 0.65,
+                //                 width: double.infinity,
+                //                 decoration: BoxDecoration(
+                //                   color: Colors.grey.withOpacity(.2),
+                //                   borderRadius: BorderRadius.circular(20),
+                //                 ),
+                //                 child: Column(
+                //                   mainAxisAlignment: MainAxisAlignment.center,
+                //                   children: [
+                //                     Text(
+                //                       quote?.content ?? 'No Available Quote',
+                //                       textAlign: TextAlign.center,
+                //                       style: const TextStyle(
+                //                         fontWeight: FontWeight.w700,
+                //                       ),
+                //                     ),
+                //                     const SizedBox(height: 80),
+                //                     Text(
+                //                       quote?.author ?? '- -',
+                //                       textAlign: TextAlign.center,
+                //                       style: const TextStyle(
+                //                         fontWeight: FontWeight.w500,
+                //                       ),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               )
+                //             : Transform(
+                //                 alignment: Alignment.center,
+                //                 transform: Matrix4.identity()..rotateY(pi),
+                //                 child: Container(
+                //                   width: double.infinity,
+                //                   margin: const EdgeInsets.symmetric(horizontal: 20),
+                //                   height: height * 0.65,
+                //                   decoration: BoxDecoration(
+                //                     color: Colors.pink.withOpacity(.1),
+                //                     borderRadius: BorderRadius.circular(20),
+                //                   ),
+                //                 ),
+                //               ),
+                //       ),
+                //     );
+                //   },
+                // ),
+              ],
+            );
+          }),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
         child: SizedBox(
           height: 45,
           child: ElevatedButton(
-            onPressed: _flipCard,
+            onPressed: isFetchingQuote ? null : _flipCard,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.grey.withOpacity(.1),
+              backgroundColor: Colors.grey,
             ),
-            child: const Text('Get More Quotes'),
+            child: isFetchingQuote
+                ? const CircularProgressIndicator.adaptive()
+                : const Text('Get More Quotes'),
           ),
         ),
       ),
     );
   }
 
-  void _flipCard() {
+  bool isFrontImage(double angle) {
+    const degree90 = pi / 2;
+    const degree270 = 3 * pi / 2;
+    return angle <= degree90 || angle > -degree270;
+  }
+
+  void _flipCard() async {
     getQuote();
-    setState(() {
-      angle = (angle + pi) % (2 * pi);
-    });
+    await _controller.forward();
+    // setState(() {
+    //   Future.delayed(const Duration(seconds: 10), () {
+    //     // angle = (angle + pi) % (2 * pi);
+    //   });
+    // });
   }
 
   QuoteModel? quote;
+  bool isFetchingQuote = false;
+
   Future<void> getQuote() async {
-    Future.delayed(const Duration(milliseconds: 500));
-    setState(() {
-      isBack = true;
-    });
-    quote = await QuoteService.getQuotes(url);
+    try {
+      setState(() {
+        isFetchingQuote = true;
+      });
+
+      await Future.delayed(const Duration(seconds: 3));
+
+      quote = await QuoteService.getQuotes(url);
+    } finally {
+      setState(() {
+        isFetchingQuote = false;
+      });
+    }
   }
 }

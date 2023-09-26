@@ -10,8 +10,6 @@ import 'package:quote_flip/utils/logger_helper.dart';
 class QuoteService {
   static Future<QuoteModel> getQuotes(final String url) async {
     try {
-      LoggerHelper.log(url);
-
       http.Response response =
           await http.get(Uri.parse(url)).timeout(const Duration(seconds: 30));
 
