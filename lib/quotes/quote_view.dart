@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quote_flip/model/quote_model.dart';
 import 'package:quote_flip/services/get_quote_service.dart';
@@ -58,6 +59,7 @@ class _QuoteFlipState extends State<QuoteFlip> {
                           quote?.content ?? 'No Available Quote',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
+                            fontSize: 18,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -66,6 +68,7 @@ class _QuoteFlipState extends State<QuoteFlip> {
                           '- ${quote?.author ?? '- -'}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
+                            fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -95,14 +98,14 @@ class _QuoteFlipState extends State<QuoteFlip> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
         child: SizedBox(
-          height: 45,
+          height: 50,
           child: ElevatedButton(
             onPressed: isFetchingQuote ? null : _flipCard,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.grey,
             ),
             child: isFetchingQuote
-                ? const CircularProgressIndicator.adaptive()
+                ? const CupertinoActivityIndicator()
                 : const Text('Get More Quotes'),
           ),
         ),
