@@ -12,143 +12,87 @@ class QuoteFlip extends StatefulWidget {
   State<QuoteFlip> createState() => _QuoteFlipState();
 }
 
-class _QuoteFlipState extends State<QuoteFlip>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+class _QuoteFlipState extends State<QuoteFlip> {
   @override
   void initState() {
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
     getQuote();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            // final angle = _controller.value * -pi;
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                isFetchingQuote
-                    ? Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      height: height * 0.65,
-                      decoration: BoxDecoration(
-                        color: Colors.pink.withOpacity(.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    )
-                    : Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      height: height * 0.65,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            quote?.content ?? 'No Available Quote',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(height: 80),
-                          Text(
-                            quote?.author ?? '- -',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 700),
+            reverseDuration: const Duration(milliseconds: 700),
+            switchInCurve: Curves.easeInCubic,
+            switchOutCurve: Curves.easeOutCubic,
+            child: isFetchingQuote
+                ? Container(
+                    key: const ValueKey(false),
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    height: height * 0.65,
+                    decoration: BoxDecoration(
+                      color: Colors.pink.withOpacity(.1),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                // TweenAnimationBuilder(
-                //   tween: Tween<double>(begin: 0.0, end: angle),
-                //   duration: const Duration(seconds: 1),
-                //   builder: (context, val, _) {
-                //     if (val >= (pi / 2)) {
-                //       isBack = false;
-                //     } else {
-                //       isBack = true;
-                //     }
-                //     return Transform(
-                //       alignment: Alignment.center,
-                //       transform: Matrix4.identity()
-                //         ..setEntry(3, 2, 0.001)
-                //         ..rotateY(val),
-                //       child: SizedBox(
-                //         child: isBack
-                //             ? Container(
-                //                 margin: const EdgeInsets.symmetric(horizontal: 20),
-                //                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                //                 height: height * 0.65,
-                //                 width: double.infinity,
-                //                 decoration: BoxDecoration(
-                //                   color: Colors.grey.withOpacity(.2),
-                //                   borderRadius: BorderRadius.circular(20),
-                //                 ),
-                //                 child: Column(
-                //                   mainAxisAlignment: MainAxisAlignment.center,
-                //                   children: [
-                //                     Text(
-                //                       quote?.content ?? 'No Available Quote',
-                //                       textAlign: TextAlign.center,
-                //                       style: const TextStyle(
-                //                         fontWeight: FontWeight.w700,
-                //                       ),
-                //                     ),
-                //                     const SizedBox(height: 80),
-                //                     Text(
-                //                       quote?.author ?? '- -',
-                //                       textAlign: TextAlign.center,
-                //                       style: const TextStyle(
-                //                         fontWeight: FontWeight.w500,
-                //                       ),
-                //                     ),
-                //                   ],
-                //                 ),
-                //               )
-                //             : Transform(
-                //                 alignment: Alignment.center,
-                //                 transform: Matrix4.identity()..rotateY(pi),
-                //                 child: Container(
-                //                   width: double.infinity,
-                //                   margin: const EdgeInsets.symmetric(horizontal: 20),
-                //                   height: height * 0.65,
-                //                   decoration: BoxDecoration(
-                //                     color: Colors.pink.withOpacity(.1),
-                //                     borderRadius: BorderRadius.circular(20),
-                //                   ),
-                //                 ),
-                //               ),
-                //       ),
-                //     );
-                //   },
-                // ),
-              ],
-            );
-          }),
+                  )
+                : Container(
+                    key: const ValueKey(true),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    height: height * 0.65,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          quote?.content ?? 'No Available Quote',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 80),
+                        Text(
+                          quote?.author ?? '- -',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              final rotate = Tween(begin: pi, end: 0.0).animate(animation);
+              return AnimatedBuilder(
+                animation: rotate,
+                child: child,
+                builder: (context, child) {
+                  final angle = (ValueKey(isFetchingQuote) != widget.key)
+                      ? min(rotate.value, pi / 2)
+                      : rotate.value;
+                  return Transform(
+                    transform: Matrix4.rotationY(angle),
+                    alignment: Alignment.center,
+                    child: child,
+                  );
+                },
+              );
+            },
+          )
+        ],
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
         child: SizedBox(
@@ -167,20 +111,12 @@ class _QuoteFlipState extends State<QuoteFlip>
     );
   }
 
-  bool isFrontImage(double angle) {
-    const degree90 = pi / 2;
-    const degree270 = 3 * pi / 2;
-    return angle <= degree90 || angle > -degree270;
-  }
 
   void _flipCard() async {
+    setState(() {
+      isFetchingQuote = !isFetchingQuote;
+    });
     getQuote();
-    await _controller.forward();
-    // setState(() {
-    //   Future.delayed(const Duration(seconds: 10), () {
-    //     // angle = (angle + pi) % (2 * pi);
-    //   });
-    // });
   }
 
   QuoteModel? quote;
@@ -192,7 +128,7 @@ class _QuoteFlipState extends State<QuoteFlip>
         isFetchingQuote = true;
       });
 
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 2));
 
       quote = await QuoteService.getQuotes(url);
     } finally {
