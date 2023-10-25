@@ -27,10 +27,9 @@ class _QuoteFlipState extends State<QuoteFlip> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           AnimatedSwitcher(
-            duration: const Duration(milliseconds: 700),
-            reverseDuration: const Duration(milliseconds: 700),
-            switchInCurve: Curves.easeInCubic,
-            switchOutCurve: Curves.easeOutCubic,
+            duration: const Duration(milliseconds: 500),
+            switchInCurve: Curves.bounceIn,
+            switchOutCurve: Curves.bounceOut,
             child: isFetchingQuote
                 ? Container(
                     key: const ValueKey(false),
@@ -64,7 +63,7 @@ class _QuoteFlipState extends State<QuoteFlip> {
                         ),
                         const SizedBox(height: 80),
                         Text(
-                          quote?.author ?? '- -',
+                          '- ${quote?.author ?? '- -'}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontWeight: FontWeight.w500,
@@ -111,7 +110,6 @@ class _QuoteFlipState extends State<QuoteFlip> {
     );
   }
 
-
   void _flipCard() async {
     setState(() {
       isFetchingQuote = !isFetchingQuote;
@@ -124,17 +122,21 @@ class _QuoteFlipState extends State<QuoteFlip> {
 
   Future<void> getQuote() async {
     try {
-      setState(() {
-        isFetchingQuote = true;
-      });
+      setState(
+        () {
+          isFetchingQuote = true;
+        },
+      );
 
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(milliseconds: 1500));
 
       quote = await QuoteService.getQuotes(url);
     } finally {
-      setState(() {
-        isFetchingQuote = false;
-      });
+      setState(
+        () {
+          isFetchingQuote = false;
+        },
+      );
     }
   }
 }
